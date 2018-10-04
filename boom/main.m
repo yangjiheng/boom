@@ -3,7 +3,7 @@
 //  boom
 //
 //  Created by Jason Yang on 2018/10/3.
-//  Copyright © 2018年 CCtalk. All rights reserved.
+//  Copyright © 2018年 . All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
