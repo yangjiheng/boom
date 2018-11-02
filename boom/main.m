@@ -59,14 +59,43 @@ int boomZipFile(const char* filename, const char *outputPath, const char *passwo
                                         password:passwordString.length > 0 ? passwordString : nil
                                            error:nil
                                         delegate:nil
-                                 progressHandler:nil
-                               completionHandler:nil];
+                                 progressHandler:^(NSString * _Nonnull entry, unz_file_info zipInfo, long entryNumber, long total) {
+                                     NSLog(@"Exracting %f%% complete\n", (float)entryNumber/(float)total);
+                                 }
+                               completionHandler:^(NSString * _Nonnull path, BOOL succeeded, NSError * _Nullable error) {
+                                   NSLog(@"Extraction complete\n");
+                               }];
     
     if (success != YES) {
         return -1;
     }
     else {
         return 0;
+    }
+}
+
+BOOL createOutputPath(const char *path) {
+    BOOL isDir = NO;
+    NSError *error = nil;
+    NSString *pathString = [NSString stringWithCString:path encoding:NSUTF8StringEncoding];
+
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:pathString isDirectory:&isDir];
+    
+    if (fileExists) {
+        if (isDir) {
+            return YES;
+        }
+        return NO;
+    }
+    else {
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:pathString
+                                       withIntermediateDirectories:NO
+                                                        attributes:nil
+                                                             error:&error]) {
+            // Creating directory failed
+            return NO;
+        }
+        return YES;
     }
 }
 
@@ -95,6 +124,12 @@ int main(int argc, const char * argv[]) {
         
         if (inputfile==NULL || outputpath==NULL) {
             NSLog(@"Usage: boom -i <inputfile> -o <output path>\n");
+            return -1;
+        }
+        
+        // Check output path to see whether it exists, if not create it.
+        if (createOutputPath(outputpath) != YES) {
+            NSLog(@"Cannot create output path :%s\n", outputpath);
             return -1;
         }
         
