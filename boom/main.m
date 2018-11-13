@@ -123,7 +123,7 @@ int main(int argc, const char * argv[]) {
         }
         
         if (inputfile==NULL || outputpath==NULL) {
-            NSLog(@"Usage: boom -i <inputfile> -o <output path>\n");
+            NSLog(@"Usage: boom -i <inputfile> -o <output path> -p <password>\n");
             return -1;
         }
         
